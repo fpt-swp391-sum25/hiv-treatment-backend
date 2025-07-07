@@ -49,6 +49,7 @@ public class SystemConfigurationService {
 
         Optional.ofNullable(request.name()).ifPresent(systemConfiguration::setName);
         Optional.ofNullable(request.value()).ifPresent(systemConfiguration::setValue);
+        systemConfigurationRepository.save(systemConfiguration);
         
         return "SYSTEM CONFIGURATION UPDATED SUCCESSFULLY WITH ID: " + id;
     }   
