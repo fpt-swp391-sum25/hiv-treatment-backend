@@ -112,6 +112,11 @@ public class AuthenticationService {
                                 || !user.isVerified())
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                                         "ACCOUNT IS UNACTIVE OR NOT VERIFIED YET");
+                
+                System.out.println(passwordEncoder.encode(request.password()));
+                if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "PASSWORD IS INCORRECT");
+                }
 
                 UserDetails userDetails = new CustomUserDetails(user);
                 String jwtToken = jwtService.generateToken(userDetails);
