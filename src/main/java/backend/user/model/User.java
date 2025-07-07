@@ -48,7 +48,7 @@ public class User {
     @Column(columnDefinition = "VARCHAR(255)")
     private String password;
 
-    @Column(columnDefinition = "VARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String avatar;
 
     private LocalDate dateOfBirth;
