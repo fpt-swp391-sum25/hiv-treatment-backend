@@ -13,6 +13,7 @@ import backend.document.dto.CreateDocumentRequest;
 import backend.document.dto.UpdateDocumentRequest;
 import backend.document.model.Document;
 import backend.document.repository.DocumentRepository;
+import backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,14 +21,16 @@ import lombok.RequiredArgsConstructor;
 public class DocumentService {
     @Autowired
     private final DocumentRepository documentRepository;
+    @Autowired
+    private final UserRepository userRepository;
 
     // Create document
     public String create(CreateDocumentRequest request) {
         var document = Document.builder()
             .title(request.title())
-            .author(request.author())
             .content(request.content())
             .createdAt(request.createdAt())
+            .doctor(userRepository.findById((request.doctorId())).get())
             .build();
         documentRepository.save(document);
 
@@ -51,7 +54,6 @@ public class DocumentService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO DOCUMENT FOUND WITH ID: " + id));
         
         Optional.ofNullable(request.title()).ifPresent(document::setTitle);
-        Optional.ofNullable(request.author()).ifPresent(document::setAuthor);
         Optional.ofNullable(request.content()).ifPresent(document::setContent);
         documentRepository.save(document);
 
@@ -71,7 +73,7 @@ public class DocumentService {
         List<Document> documents = documentRepository.findAll();
         List<Document> searchList = list();
         for (Document document : documents) {
-            if (Objects.toString(document.getAuthor(), "").contains(searchString) 
+            if (Objects.toString(document.getDoctor().getFullName(), "").contains(searchString) 
             || Objects.toString(document.getTitle(), "").contains(searchString)
             ||Objects.toString(document.getContent(), "").contains(searchString))  {
                 searchList.add(document);
