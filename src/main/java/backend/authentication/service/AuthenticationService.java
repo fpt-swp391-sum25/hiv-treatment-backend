@@ -81,7 +81,8 @@ public class AuthenticationService {
                 UserDetails userDetails = new CustomUserDetails(user);
                 String jwtToken = jwtService.generateToken(userDetails);
 
-                return new AuthenticationResponse(jwtToken, user.getUsername(), user.getRole().name());
+                return new AuthenticationResponse(jwtToken, user.getUsername(), user.getFullName(),
+                                user.getRole().name());
         }
 
         // Send mail verification status
@@ -115,7 +116,27 @@ public class AuthenticationService {
                 UserDetails userDetails = new CustomUserDetails(user);
                 String jwtToken = jwtService.generateToken(userDetails);
 
-                return new AuthenticationResponse(jwtToken, user.getUsername(), user.getRole().name());
+                return new AuthenticationResponse(jwtToken, user.getUsername(), user.getFullName(),
+                                user.getRole().name());
+        }
+
+        public AuthenticationResponse loginOrRegisterGoogleUser(String email, String fullName) {
+                User user = userRepository.findByEmail(email).orElseGet(() -> {
+                        User newUser = User.builder()
+                                        .username(email)
+                                        .email(email)
+                                        .fullName(fullName)
+                                        .password(passwordEncoder.encode("google-auth-" + email))
+                                        .role(Role.PATIENT)
+                                        .accountStatus("ACTIVE")
+                                        .isVerified(true)
+                                        .createdAt(LocalDate.now())
+                                        .build();
+                        return userRepository.save(newUser);
+                });
+
+                String jwt = jwtService.generateToken(new CustomUserDetails(user));
+                return new AuthenticationResponse(jwt, user.getUsername(), user.getFullName(), user.getRole().name());
         }
 
         // Retrieve user account information

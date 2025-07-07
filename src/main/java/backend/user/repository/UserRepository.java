@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByIsVerified(boolean isVerified);
 
     List<User> findByAccountStatus(String status);
+
+    Optional<User> findByEmail(String email);
 }

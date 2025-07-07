@@ -81,7 +81,8 @@ public class HealthRecordService {
 
     // Read health record by schedule ID
     public HealthRecord getByScheduleId(long scheduleId) {
-        HealthRecord record = healthRecordRepository.findByScheduleId(scheduleId).get();
+        HealthRecord record = healthRecordRepository.findByScheduleId(scheduleId);
+
         return record;
     }
 }

@@ -11,11 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+
 import backend.authentication.dto.AccountResponse;
 import backend.authentication.dto.AuthenticationResponse;
+import backend.authentication.dto.GoogleTokenResponse;
 import backend.authentication.dto.LoginRequest;
 import backend.authentication.dto.RegisterRequest;
 import backend.authentication.service.AuthenticationService;
+import backend.authentication.service.GoogleAuthService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
+    private final GoogleAuthService googleAuthService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
@@ -32,6 +37,18 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authenticationService.login(request));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthenticationResponse> loginWithGoogle(@RequestBody Map<String, String> body) {
+        String code = body.get("code");
+
+        GoogleTokenResponse tokenResponse = googleAuthService.exchangeCodeForToken(code);
+        GoogleIdToken.Payload payload = googleAuthService.parseIdToken(tokenResponse.getId_token());
+
+        AuthenticationResponse authResponse = authenticationService.loginOrRegisterGoogleUser(payload.getEmail(),
+                (String) payload.get("name"));
+        return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/verify")

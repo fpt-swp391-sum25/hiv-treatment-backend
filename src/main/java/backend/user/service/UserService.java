@@ -67,7 +67,7 @@ public class UserService {
         message.setText(body);
         mailSender.send(message);
 
-        return new AuthenticationResponse(token, user.getUsername(), user.getRole().name());
+        return new AuthenticationResponse(token, user.getUsername(), user.getFullName(), user.getRole().name());
     }
 
     // Read user detail
@@ -86,7 +86,9 @@ public class UserService {
         Optional.ofNullable(request.gender()).ifPresent(user::setGender);
         Optional.ofNullable(request.email()).ifPresent(user::setEmail);
         Optional.ofNullable(request.username()).ifPresent(user::setUsername);
-        Optional.ofNullable(request.password()).ifPresent(user::setPassword);
+        Optional.ofNullable(request.password())
+                .map(passwordEncoder::encode)
+                .ifPresent(user::setPassword);
         Optional.ofNullable(request.address()).ifPresent(user::setAddress);
         Optional.ofNullable(request.avatar()).ifPresent(user::setAvatar);
         Optional.ofNullable(request.dateOfBirth()).ifPresent(user::setDateOfBirth);

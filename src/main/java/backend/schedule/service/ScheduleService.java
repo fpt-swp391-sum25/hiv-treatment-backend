@@ -142,7 +142,7 @@ public class ScheduleService {
         schedule.setType(null);
         scheduleRepository.save(schedule);
 
-        HealthRecord record = healthRecordRepository.findByScheduleId(scheduleId).get();
+        HealthRecord record = healthRecordRepository.findByScheduleId(scheduleId);
         if (record != null) {
             healthRecordRepository.delete(record);
         }
