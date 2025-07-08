@@ -1,7 +1,7 @@
 package backend.documentimage.dto;
 
 public record UpdateDocumentImageRequest (
-    String url,
+    String image,
 
     long documentId
 ) {   
