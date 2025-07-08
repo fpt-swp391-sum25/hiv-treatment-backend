@@ -11,6 +11,6 @@ public record  CreateRegimenRequest(
 
     String contraindications,
     
-    int recordId
+    long doctorId
 ) {
 }

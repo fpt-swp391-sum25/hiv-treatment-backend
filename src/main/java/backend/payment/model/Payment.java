@@ -1,5 +1,7 @@
 package backend.payment.model;
 
+import java.time.LocalDateTime;
+
 import backend.schedule.model.Schedule;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,12 +27,6 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(columnDefinition = "NVARCHAR(100)")
-    private String name;
-
-    @Column(columnDefinition = "NVARCHAR(100)")
-    private String account;
-
     @Column(columnDefinition = "NVARCHAR(255)")
     private String description;
 
@@ -39,6 +35,8 @@ public class Payment {
 
     @Column(columnDefinition = "NVARCHAR(100)")
     private String status;
+
+    private LocalDateTime time;
 
     private float amount;
 

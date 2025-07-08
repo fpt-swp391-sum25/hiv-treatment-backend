@@ -25,8 +25,8 @@ public class DocumentImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(columnDefinition = "VARCHAR(255)")
-    private String url;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "documentId", referencedColumnName = "id")

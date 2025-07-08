@@ -1,6 +1,7 @@
 package backend.exception;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import backend.exception.dto.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -58,5 +60,23 @@ public class GlobalExceptionHandler {
                 "An unexpected error occurred",
                 LocalDateTime.now().toString());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.CONFLICT.value(),          
+            ex.getMessage(),
+            LocalDateTime.now().toString()
+    );
+    return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode()).body(Map.of(
+            "status", ex.getStatusCode().value(),
+            "message", ex.getReason()
+        ));
     }
 }

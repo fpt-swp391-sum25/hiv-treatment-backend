@@ -11,6 +11,6 @@ public record  UpdateRegimenRequest(
 
     String contraindications,
     
-    int recordId
+    long doctorId
 ) {
 }
