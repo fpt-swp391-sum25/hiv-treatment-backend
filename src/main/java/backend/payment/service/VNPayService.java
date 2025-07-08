@@ -6,10 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import java.util.Collections;
-import java.util.Date;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -123,7 +120,6 @@ public class VNPayService {
 
         Payment payment = Payment.builder()
                 .schedule(schedule)
-                .name("Thanh toan lich hen " + scheduleId)
                 .paymentRef(vnp_TxnRef)
                 .description("Chờ thanh toán")
                 .status("PENDING")

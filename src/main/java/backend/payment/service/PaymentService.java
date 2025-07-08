@@ -29,9 +29,8 @@ public class PaymentService {
     // Create payment
     public String create(CreatePaymentRequest request) {
         Payment payment = Payment.builder()
-                .name(request.name())
-                .account(request.account())
                 .description(request.description())
+                .time(request.time())
                 .amount(request.amount())
                 .schedule(checkupScheduleRepository.findById(request.scheduleId()).get())
                 .build();

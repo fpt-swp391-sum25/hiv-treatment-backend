@@ -1,13 +1,13 @@
 package backend.payment.dto;
 
+import java.time.LocalDateTime;
+
 public record CreatePaymentRequest (
-    String name,
-
-    String account, 
-
     Boolean status, 
 
     String description, 
+
+    LocalDateTime time,
 
     Float amount,
     
