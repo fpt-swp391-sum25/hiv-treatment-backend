@@ -42,7 +42,7 @@ public class UserService {
                 .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .accountStatus("ACTIVE")
+                .accountStatus("Đang hoạt động")
                 .role(Role.valueOf(request.role().toUpperCase()))
                 .createdAt(LocalDate.now())
                 .isVerified(false)
@@ -99,8 +99,13 @@ public class UserService {
 
     // Delete user
     public String delete(long id) {
-        userRepository.delete(userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO USER FOUND WITH ID: " + id)));
+        MailVerification mailVerified = mailVerificationRepository.findByUserId(id);
+        if (mailVerified != null) {
+            mailVerificationRepository.deleteById(mailVerified.getId());
+            userRepository.delete(userRepository.findById(id)
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO USER FOUND WITH ID: " + id)));
+        }
 
         return "USER DELETED SUCCESSFULLY WITH ID: " + id;
     }

@@ -58,7 +58,7 @@ public class HealthRecordService {
         Optional.ofNullable(request.weight()).ifPresent(record::setWeight);
         Optional.ofNullable(request.height()).ifPresent(record::setHeight);
         Optional.ofNullable(request.treatmentStatus()).ifPresent(record::setTreatmentStatus);
-        Optional.ofNullable(scheduleRepository.findById(request.scheduleId()).get()).ifPresent(record::setSchedule);
+        // Optional.ofNullable(scheduleRepository.findById(request.scheduleId()).get()).ifPresent(record::setSchedule);
         if (request.regimenId() == null) {
             record.setRegimen(null);
         } else {
