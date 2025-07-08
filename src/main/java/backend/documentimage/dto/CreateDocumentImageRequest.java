@@ -1,7 +1,7 @@
 package backend.documentimage.dto;
 
 public record CreateDocumentImageRequest (
-    String url,
+    String image,
 
     long documentId
 ) {   

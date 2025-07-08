@@ -31,7 +31,7 @@ public class DocumentImageService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO DOCUMENT FOUND WITH ID: " + request.documentId()));
 
         DocumentImage documentImage = DocumentImage.builder()
-            .url(request.url())
+            .image(request.image())
             .document(document)
             .build();
 
@@ -56,7 +56,7 @@ public class DocumentImageService {
         DocumentImage documentImage = documentImageRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO DOCUMENT IMAGE FOUND WITH ID: " + id));
 
-        Optional.ofNullable(request.url()).ifPresent(documentImage::setUrl);
+        Optional.ofNullable(request.image()).ifPresent(documentImage::setImage);
 
         Document document = documentRepository.findById(request.documentId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO DOCUMENT FOUND WITH ID: " + request.documentId()));
