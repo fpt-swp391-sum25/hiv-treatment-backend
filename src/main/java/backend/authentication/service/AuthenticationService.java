@@ -54,7 +54,8 @@ public class AuthenticationService {
                                 .address(request.address())
                                 .username(request.username())
                                 .password(passwordEncoder.encode(request.password()))
-                                .accountStatus("ACTIVE")
+                                .accountStatus("Đang hoạt động")
+                                .avatar("")
                                 .role(Role.PATIENT)
                                 .createdAt(LocalDate.now())
                                 .build();

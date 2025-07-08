@@ -64,19 +64,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
-    ErrorResponse errorResponse = new ErrorResponse(
-            HttpStatus.CONFLICT.value(),          
-            ex.getMessage(),
-            LocalDateTime.now().toString()
-    );
-    return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toString());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
         return ResponseEntity.status(ex.getStatusCode()).body(Map.of(
-            "status", ex.getStatusCode().value(),
-            "message", ex.getReason()
-        ));
+                "status", ex.getStatusCode().value(),
+                "message", ex.getReason()));
     }
 }
