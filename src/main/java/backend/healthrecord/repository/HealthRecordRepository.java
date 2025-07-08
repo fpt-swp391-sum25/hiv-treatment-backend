@@ -11,4 +11,5 @@ import backend.healthrecord.model.HealthRecord;
 public interface HealthRecordRepository extends JpaRepository<HealthRecord, Long> {
     @Query("SELECT h FROM HealthRecord h WHERE h.schedule.id = :scheduleId")
     HealthRecord findByScheduleId(@Param("scheduleId") long scheduleId);
+    boolean existsByRegimenId(Long regimenId);
 }
