@@ -7,6 +7,8 @@ public record  UpdateNotificationRequest(
 
     String message,
     
+    boolean isRead,
+
     LocalDateTime createdAt
 ) {
 }
