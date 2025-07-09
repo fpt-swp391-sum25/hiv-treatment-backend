@@ -134,7 +134,7 @@ public class AuthenticationService {
                                         .fullName(fullName)
                                         .password(passwordEncoder.encode("google-auth-" + email))
                                         .role(Role.PATIENT)
-                                        .accountStatus("ACTIVE")
+                                        .accountStatus("Đang hoạt động")
                                         .isVerified(true)
                                         .createdAt(LocalDate.now())
                                         .build();
