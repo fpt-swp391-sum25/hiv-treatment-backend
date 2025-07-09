@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -121,9 +123,10 @@ public class VNPayService {
         Payment payment = Payment.builder()
                 .schedule(schedule)
                 .paymentRef(vnp_TxnRef)
-                .description("Chờ thanh toán")
-                .status("PENDING")
+                .description("Thanh toán lịch hẹn" + schedule.getId())
+                .status("Chờ thanh toán")
                 .amount(Float.parseFloat(amount))
+                .time(LocalDateTime.now())
                 .build();
         paymentRepository.save(payment);
 
@@ -186,21 +189,23 @@ public class VNPayService {
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
 
         if (!calculatedHash.equals(vnpSecureHash)) {
-            payment.setStatus("FAILED");
-            payment.setDescription("Invalid checksum");
+            payment.setStatus("Thanh toán thất bại");
+            // payment.setDescription("Invalid checksum");
             paymentRepository.save(payment);
             throw new IllegalStateException("Invalid checksum");
         }
 
         if ("00".equals(vnpResponseCode)) {
-            payment.setStatus("SUCCESS");
-            payment.setDescription("Thanh toán thành công, mã phản hồi: " + vnpResponseCode);
+            payment.setStatus("Thanh toán thành công");
+            // payment.setDescription("Thanh toán thành công, mã phản hồi: " +
+            // vnpResponseCode);
             Schedule schedule = payment.getSchedule();
             schedule.setStatus("Đã thanh toán");
             scheduleRepository.save(schedule);
         } else {
-            payment.setStatus("FAILED");
-            payment.setDescription("Thanh toán thất bại, mã phản hồi: " + vnpResponseCode);
+            payment.setStatus("Thanh toán thất bại");
+            // payment.setDescription("Thanh toán thất bại, mã phản hồi: " +
+            // vnpResponseCode);
             Schedule schedule = payment.getSchedule();
             schedule.setStatus("Tr\u1ed1ng");
             schedule.setPatient(null);

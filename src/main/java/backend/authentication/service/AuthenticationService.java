@@ -119,11 +119,6 @@ public class AuthenticationService {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "PASSWORD IS INCORRECT");
                 }
 
-                System.out.println(passwordEncoder.encode(request.password()));
-                if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "PASSWORD IS INCORRECT");
-                }
-
                 UserDetails userDetails = new CustomUserDetails(user);
                 String jwtToken = jwtService.generateToken(userDetails);
 
@@ -139,7 +134,7 @@ public class AuthenticationService {
                                         .fullName(fullName)
                                         .password(passwordEncoder.encode("google-auth-" + email))
                                         .role(Role.PATIENT)
-                                        .accountStatus("ACTIVE")
+                                        .accountStatus("Đang hoạt động")
                                         .isVerified(true)
                                         .createdAt(LocalDate.now())
                                         .build();
