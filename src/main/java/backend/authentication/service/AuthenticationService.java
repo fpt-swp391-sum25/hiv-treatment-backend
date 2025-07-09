@@ -54,7 +54,7 @@ public class AuthenticationService {
                                 .address(request.address())
                                 .username(request.username())
                                 .password(passwordEncoder.encode(request.password()))
-                                .accountStatus("Đang hoạt động")
+                                .accountStatus("Đang hoạt động")
                                 .avatar("")
                                 .role(Role.PATIENT)
                                 .createdAt(LocalDate.now())
@@ -69,9 +69,9 @@ public class AuthenticationService {
                                 .build();
                 mailVerificationRepository.save(verificationToken);
 
-                String subject = "Verify your email";
-                String verificationUrl = "http://localhost:8080/api/auth/verify?token=" + token;
-                String body = "Click the link to verify your email: " + verificationUrl;
+                String subject = "Xác nhận email của bạn";
+                String verificationUrl = "http://localhost:3000/verify?token=" + token;
+                String body = "Nhấn vào đây để xác thực email: " + verificationUrl;
 
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(user.getEmail());
@@ -101,6 +101,34 @@ public class AuthenticationService {
                 userRepository.save(user);
 
                 return "MAIL VERIFIED SUCCESSFULLY";
+        }
+
+        public void resendVerify(String email) {
+                User user = userRepository.findByEmail(email).get();
+                if (user == null) {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "EMAIL NOT FOUND");
+                }
+                if (user.isVerified()) {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "EMAIL IS VERIFIED");
+                }
+
+                String token = UUID.randomUUID().toString();
+                MailVerification verificationToken = MailVerification.builder()
+                                .token(token)
+                                .expiryDate(LocalDateTime.now().plusHours(24))
+                                .user(user)
+                                .build();
+                mailVerificationRepository.save(verificationToken);
+
+                String subject = "Xác nhận email của bạn";
+                String verificationUrl = "http://localhost:3000/verify?token=" + token;
+                String body = "Nhấn vào đây để xác thực email: " + verificationUrl;
+
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(user.getEmail());
+                message.setSubject(subject);
+                message.setText(body);
+                mailSender.send(message);
         }
 
         // Log in with user name and password
@@ -134,7 +162,7 @@ public class AuthenticationService {
                                         .fullName(fullName)
                                         .password(passwordEncoder.encode("google-auth-" + email))
                                         .role(Role.PATIENT)
-                                        .accountStatus("Đang hoạt động")
+                                        .accountStatus("Đang hoạt động")
                                         .isVerified(true)
                                         .createdAt(LocalDate.now())
                                         .build();
