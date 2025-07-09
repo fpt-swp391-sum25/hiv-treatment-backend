@@ -11,4 +11,6 @@ public interface MailVerificationRepository extends JpaRepository<MailVerificati
     Optional<MailVerification> findByToken(String token);
 
     void deleteByExpiryDateBefore(LocalDateTime dateTime);
+
+    MailVerification findByUserId(long id);
 }

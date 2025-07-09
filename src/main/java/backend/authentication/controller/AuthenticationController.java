@@ -29,14 +29,15 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final GoogleAuthService googleAuthService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authenticationService.register(request));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authenticationService.login(request));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+        System.out.println(">>>>>>>>> Register request received: " + request);
+        return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/google")
