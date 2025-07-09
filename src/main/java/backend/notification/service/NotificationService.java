@@ -31,6 +31,7 @@ public class NotificationService {
             .title(request.title())
             .message(request.message())
             .createdAt(request.createdAt())
+            .isRead(false)
             .user(userRepository.findById(request.userId()).get())
             .build();
         notificationRepository.save(notification);
@@ -57,6 +58,7 @@ public class NotificationService {
         Optional.ofNullable(request.title()).ifPresent(notification::setTitle);
         Optional.ofNullable(request.message()).ifPresent(notification::setMessage);
         Optional.ofNullable(request.createdAt()).ifPresent(notification::setCreatedAt);
+        Optional.ofNullable(request.isRead()).ifPresent(notification::setRead);
         notificationRepository.save(notification);
 
         return "NOTIFICATION UPDATED SUCCESSFULLY WITH ID: " + id;

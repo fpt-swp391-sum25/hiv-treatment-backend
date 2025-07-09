@@ -3,22 +3,23 @@ package backend.user.dto;
 import java.time.LocalDate;
 
 public record UpdateUserRequest(
-    String phoneNumber,
+        String phoneNumber,
 
-    String fullName,
+        String fullName,
 
-    String gender,
+        String gender,
 
-    String email,
+        String email,
 
-    String username,
+        String username,
 
-    String password,
+        String password,
 
-    String address,
+        String address,
 
-    String avatar,
-    
-    LocalDate dateOfBirth
-) {
+        String avatar,
+
+        LocalDate dateOfBirth,
+
+        String accountStatus) {
 }

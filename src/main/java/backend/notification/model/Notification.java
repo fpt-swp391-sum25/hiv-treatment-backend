@@ -33,6 +33,8 @@ public class Notification {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String message;
 
+    private boolean isRead;
+
     private LocalDateTime createdAt;
     
     @ManyToOne

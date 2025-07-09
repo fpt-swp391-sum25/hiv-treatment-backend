@@ -54,7 +54,8 @@ public class AuthenticationService {
                                 .address(request.address())
                                 .username(request.username())
                                 .password(passwordEncoder.encode(request.password()))
-                                .accountStatus("ACTIVE")
+                                .accountStatus("Đang hoạt động")
+                                .avatar("")
                                 .role(Role.PATIENT)
                                 .createdAt(LocalDate.now())
                                 .build();
@@ -113,6 +114,11 @@ public class AuthenticationService {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                                         "ACCOUNT IS UNACTIVE OR NOT VERIFIED YET");
                 
+                System.out.println(passwordEncoder.encode(request.password()));
+                if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "PASSWORD IS INCORRECT");
+                }
+
                 System.out.println(passwordEncoder.encode(request.password()));
                 if (!passwordEncoder.matches(request.password(), user.getPassword())) {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "PASSWORD IS INCORRECT");

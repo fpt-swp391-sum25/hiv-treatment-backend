@@ -42,8 +42,9 @@ public class UserService {
                 .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .accountStatus("ACTIVE")
+                .accountStatus("Đang hoạt động")
                 .role(Role.valueOf(request.role().toUpperCase()))
+                .avatar("")
                 .createdAt(LocalDate.now())
                 .isVerified(false)
                 .build();
@@ -89,6 +90,7 @@ public class UserService {
         Optional.ofNullable(request.password())
                 .map(passwordEncoder::encode)
                 .ifPresent(user::setPassword);
+        Optional.ofNullable(request.accountStatus()).ifPresent(user::setAccountStatus);
         Optional.ofNullable(request.address()).ifPresent(user::setAddress);
         Optional.ofNullable(request.avatar()).ifPresent(user::setAvatar);
         Optional.ofNullable(request.dateOfBirth()).ifPresent(user::setDateOfBirth);
@@ -99,8 +101,13 @@ public class UserService {
 
     // Delete user
     public String delete(long id) {
-        userRepository.delete(userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO USER FOUND WITH ID: " + id)));
+        MailVerification mailVerified = mailVerificationRepository.findByUserId(id);
+        if (mailVerified != null) {
+            mailVerificationRepository.deleteById(mailVerified.getId());
+            userRepository.delete(userRepository.findById(id)
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO USER FOUND WITH ID: " + id)));
+        }
 
         return "USER DELETED SUCCESSFULLY WITH ID: " + id;
     }
