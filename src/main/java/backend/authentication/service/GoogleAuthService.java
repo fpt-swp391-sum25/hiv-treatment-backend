@@ -38,14 +38,12 @@ public class GoogleAuthService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
-        params.add("client_id", "115076786122-q76et2blbn1k1dmfpd6d5ss1t192ljj6.apps.googleusercontent.com");
-        params.add("client_secret", "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");
+        params.add("client_id", "352858603517-ntvardeqch50ati93mpfjgl2aqqaf8qp.apps.googleusercontent.com");
+        params.add("client_secret", "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");
         params.add("redirect_uri", "http://localhost:3000");
         params.add("grant_type", "authorization_code");
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-
-        System.out.println("????" + params);
 
         ResponseEntity<GoogleTokenResponse> response = restTemplate.exchange(
                 "https://oauth2.googleapis.com/token",
