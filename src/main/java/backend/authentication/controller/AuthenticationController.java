@@ -57,6 +57,13 @@ public class AuthenticationController {
         return ResponseEntity.ok(Map.of("message", authenticationService.verify(token)));
     }
 
+    @GetMapping("/resend-email")
+    public ResponseEntity<Map<String, String>> resendVerify(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        authenticationService.resendVerify(email);
+        return ResponseEntity.ok(Map.of("message", "EMAIL SENT"));
+    }
+
     @GetMapping("/account")
     public ResponseEntity<AccountResponse> getAccount() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

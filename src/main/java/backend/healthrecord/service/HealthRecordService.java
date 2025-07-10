@@ -28,7 +28,7 @@ public class HealthRecordService {
     public String create(CreateHealthRecordRequest request) {
         var healthRecord = HealthRecord.builder()
                 .hivStatus("Chưa xác định")
-                .treatmentStatus("Đang chờ khám")
+                .treatmentStatus("Đang chờ khám")
                 .schedule(scheduleRepository.findById(request.scheduleId()).get())
                 .build();
         healthRecordRepository.save(healthRecord);
