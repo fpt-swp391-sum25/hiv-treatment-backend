@@ -42,7 +42,7 @@ public class UserService {
                 .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .accountStatus("Đang hoạt động")
+                .accountStatus("Đang hoạt động")
                 .role(Role.valueOf(request.role().toUpperCase()))
                 .avatar("")
                 .createdAt(LocalDate.now())
@@ -58,9 +58,9 @@ public class UserService {
                 .build();
         mailVerificationRepository.save(verificationToken);
 
-        String subject = "Verify your email";
-        String verificationUrl = "http://localhost:8080/api/verify?token=" + token;
-        String body = "Click the link to verify your email: " + verificationUrl;
+        String subject = "Xác nhận email của bạn";
+        String verificationUrl = "http://localhost:3000/verify?token=" + token;
+        String body = "Nhấn vào đây để xác thực email: " + verificationUrl;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
@@ -104,10 +104,10 @@ public class UserService {
         MailVerification mailVerified = mailVerificationRepository.findByUserId(id);
         if (mailVerified != null) {
             mailVerificationRepository.deleteById(mailVerified.getId());
-            userRepository.delete(userRepository.findById(id)
-                    .orElseThrow(
-                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO USER FOUND WITH ID: " + id)));
         }
+        userRepository.delete(userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO USER FOUND WITH ID: " + id)));
 
         return "USER DELETED SUCCESSFULLY WITH ID: " + id;
     }
