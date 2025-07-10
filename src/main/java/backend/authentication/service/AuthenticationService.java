@@ -51,6 +51,7 @@ public class AuthenticationService {
                                 .gender(request.gender())
                                 .dateOfBirth(request.dateOfBirth())
                                 .email(request.email())
+                                .phoneNumber(request.phoneNumber())
                                 .address(request.address())
                                 .username(request.username())
                                 .password(passwordEncoder.encode(request.password()))
