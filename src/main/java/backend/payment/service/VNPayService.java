@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -123,11 +122,98 @@ public class VNPayService {
         Payment payment = Payment.builder()
                 .schedule(schedule)
                 .paymentRef(vnp_TxnRef)
-                .description("Thanh toán lịch hẹn" + schedule.getId())
+                .description("Thanh toán lịch hẹn " + schedule.getId())
                 .status("Chờ thanh toán")
                 .amount(Float.parseFloat(amount))
                 .time(LocalDateTime.now())
                 .build();
+        paymentRepository.save(payment);
+
+        return paymentUrl;
+    }
+
+    public String retryPayment(Long scheduleId, String amount, String ipAddress)
+            throws UnsupportedEncodingException, Exception {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "pay";
+        String orderType = "other";
+
+        long amountLong = Long.parseLong(amount) * 100;
+
+        String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
+        String vnp_IpAddr = ipAddress;
+
+        Map<String, String> vnp_Params = new HashMap<>();
+        vnp_Params.put("vnp_Version", vnp_Version);
+        vnp_Params.put("vnp_Command", vnp_Command);
+        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_Amount", String.valueOf(amountLong));
+        vnp_Params.put("vnp_CurrCode", "VND");
+
+        // if (bankCode != null && !bankCode.isEmpty()) {
+        // vnp_Params.put("vnp_BankCode", bankCode);
+        // }
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderType", orderType);
+
+        vnp_Params.put("vnp_Locale", "vn");
+        vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String vnp_CreateDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+
+        cld.add(Calendar.MINUTE, 15);
+        String vnp_ExpireDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+        List<String> fieldNames = new ArrayList<String>(vnp_Params.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
+        Iterator<String> itr = fieldNames.iterator();
+
+        while (itr.hasNext()) {
+            String fieldName = (String) itr.next();
+            String fieldValue = (String) vnp_Params.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                // Build hash data
+                hashData.append(fieldName);
+                hashData.append('=');
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                // Build query
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                query.append('=');
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                if (itr.hasNext()) {
+                    query.append('&');
+                    hashData.append('&');
+                }
+            }
+        }
+        String queryUrl = query.toString();
+        String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
+        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+        String paymentUrl = vnp_PaymentUrl + "?" + queryUrl;
+
+        Payment payment = paymentRepository.findByScheduleId(scheduleId).get();
+        payment.setAmount(Long.parseLong(amount));
+        payment.setPaymentRef(vnp_TxnRef);
+
+        // Payment.builder()
+        // .schedule(schedule)
+        // .paymentRef(vnp_TxnRef)
+        // .description("Thanh toán lịch hẹn " + schedule.getId())
+        // .status("Chờ thanh toán")
+        // .amount(Float.parseFloat(amount))
+        // .time(LocalDateTime.now())
+        // .build();
         paymentRepository.save(payment);
 
         return paymentUrl;
@@ -207,8 +293,7 @@ public class VNPayService {
             // payment.setDescription("Thanh toán thất bại, mã phản hồi: " +
             // vnpResponseCode);
             Schedule schedule = payment.getSchedule();
-            schedule.setStatus("Tr\u1ed1ng");
-            schedule.setPatient(null);
+            schedule.setStatus("Thanh toán thất bại");
             scheduleRepository.save(schedule);
         }
         paymentRepository.save(payment);
