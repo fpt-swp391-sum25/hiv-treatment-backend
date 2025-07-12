@@ -45,6 +45,12 @@ public class PaymentService {
         return vnpayService.createPaymentUrl(scheduleId, amount, ipAddress);
     }
 
+    public String retryPayment(Long scheduleId, String amount, String ipAddress)
+            throws UnsupportedEncodingException, Exception {
+
+        return vnpayService.retryPayment(scheduleId, amount, ipAddress);
+    }
+
     // List payments
     public List<Payment> list() {
         return paymentRepository.findAll();
@@ -53,7 +59,8 @@ public class PaymentService {
     // Read payment detail
     public Payment get(long id) {
         return paymentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO PAYMENT FOUND WITH ID: " + id));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO PAYMENT FOUND WITH ID: " + id));
     }
 
     // List payments by status

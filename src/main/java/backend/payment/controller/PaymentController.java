@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +32,15 @@ public class PaymentController {
             throws UnsupportedEncodingException, Exception {
         String ipAddress = vnpayService.getIpAddress(request);
         String paymentUrl = paymentService.initiatePayment(paymentDTO.getScheduleId(), paymentDTO.getAmount(),
+                ipAddress);
+        return ResponseEntity.ok(paymentUrl);
+    }
+
+    @PostMapping("/retry")
+    public ResponseEntity<String> retryPayment(@RequestBody PaymentDTO paymentDTO, HttpServletRequest request)
+            throws UnsupportedEncodingException, Exception {
+        String ipAddress = vnpayService.getIpAddress(request);
+        String paymentUrl = paymentService.retryPayment(paymentDTO.getScheduleId(), paymentDTO.getAmount(),
                 ipAddress);
         return ResponseEntity.ok(paymentUrl);
     }
