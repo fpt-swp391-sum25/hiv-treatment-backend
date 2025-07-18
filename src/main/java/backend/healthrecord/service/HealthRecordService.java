@@ -12,6 +12,8 @@ import backend.healthrecord.dto.CreateHealthRecordRequest;
 import backend.healthrecord.dto.UpdateHealthRecordRequest;
 import backend.healthrecord.model.HealthRecord;
 import backend.healthrecord.repository.HealthRecordRepository;
+import backend.payment.model.Payment;
+import backend.payment.repository.PaymentRepository;
 import backend.regimen.repository.RegimenRepository;
 import backend.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +25,15 @@ public class HealthRecordService {
     private final HealthRecordRepository healthRecordRepository;
     private final ScheduleRepository scheduleRepository;
     private final RegimenRepository regimenRepository;
+    private final PaymentRepository paymentRepository;
 
     // Create health record
     public String create(CreateHealthRecordRequest request) {
+        Payment payment = paymentRepository.findByPaymentRef(request.paymentRef()).get();
         var healthRecord = HealthRecord.builder()
                 .hivStatus("Chưa xác định")
                 .treatmentStatus("Đang chờ khám")
-                .schedule(scheduleRepository.findById(request.scheduleId()).get())
+                .schedule(scheduleRepository.findById(payment.getSchedule().getId()).get())
                 .build();
         healthRecordRepository.save(healthRecord);
 

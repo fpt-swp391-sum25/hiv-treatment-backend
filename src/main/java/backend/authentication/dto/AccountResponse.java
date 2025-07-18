@@ -13,6 +13,8 @@ public class AccountResponse {
     private String phoneNumber;
     private String address;
     private String gender;
+    private LocalDate createdAt;
+    private String displayId;
     private LocalDate dateOfBirth;
     private String avatar;
     private boolean verified;
@@ -30,7 +32,9 @@ public class AccountResponse {
             LocalDate dateOfBirth,
             String avatar,
             boolean verified,
-            Role role) {
+            Role role,
+            LocalDate createdAt,
+            String displayId) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -41,6 +45,8 @@ public class AccountResponse {
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
         this.avatar = avatar;
+        this.createdAt = createdAt;
+        this.displayId = displayId;
         this.verified = verified;
         this.role = role;
     }
@@ -87,6 +93,14 @@ public class AccountResponse {
 
     public Role getRole() {
         return role;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setRole(Role role) {
@@ -139,5 +153,9 @@ public class AccountResponse {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public String getDisplayId() {
+        return role.name().substring(0, 3) + "-" + id;
     }
 }
