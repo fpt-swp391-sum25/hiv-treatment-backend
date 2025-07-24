@@ -174,6 +174,35 @@ public class AuthenticationService {
                 return new AuthenticationResponse(jwt, user.getUsername(), user.getFullName(), user.getRole().name());
         }
 
+        public void sendResetPassword(String email) {
+                Optional<User> userOptional = userRepository.findByEmail(email);
+                if (!userOptional.isPresent()) {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "EMAIL NOT FOUND");
+                }
+                User user = userOptional.get();
+                UserDetails userDetails = new CustomUserDetails(user);
+                String jwtToken = jwtService.generateToken(userDetails);
+                String subject = "Thay đổi mật khẩu";
+                String verificationUrl = "http://localhost:3000/reset-password?token=" + jwtToken;
+                String body = "Nhấn vào đây để thay đổi mật khẩu: " + verificationUrl;
+
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(user.getEmail());
+                message.setSubject(subject);
+                message.setText(body);
+                mailSender.send(message);
+
+        }
+
+        public void resetPassword(String username, String password) {
+                User user = userRepository.findByUsername(username).get();
+                if (user == null) {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "USERNAME NOT FOUND");
+                }
+                user.setPassword(passwordEncoder.encode(password));
+                userRepository.save(user);
+        }
+
         // Retrieve user account information
         public AccountResponse getUserInfo(String username) {
                 User user = userRepository.findByUsername(username)
