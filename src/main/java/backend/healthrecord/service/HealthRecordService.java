@@ -60,7 +60,6 @@ public class HealthRecordService {
         HealthRecord record = healthRecordRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "NO HEALTH RECORD FOUND WITH ID: " + id));
-        System.out.println(">>>>>>>>>>>>>>>" + request.regimenId());
         Optional.ofNullable(request.hivStatus()).ifPresent(record::setHivStatus);
         Optional.ofNullable(request.bloodType()).ifPresent(record::setBloodType);
         Optional.ofNullable(request.weight()).ifPresent(record::setWeight);
