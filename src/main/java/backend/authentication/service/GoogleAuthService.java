@@ -39,7 +39,7 @@ public class GoogleAuthService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
         params.add("client_id", "352858603517-ntvardeqch50ati93mpfjgl2aqqaf8qp.apps.googleusercontent.com");
-        params.add("client_secret", "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");
+        params.add("client_secret", "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");
         params.add("redirect_uri", "http://localhost:3000");
         params.add("grant_type", "authorization_code");
 
