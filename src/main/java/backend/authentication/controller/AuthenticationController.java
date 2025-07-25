@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import backend.authentication.dto.LoginRequest;
 import backend.authentication.dto.RegisterRequest;
 import backend.authentication.service.AuthenticationService;
 import backend.authentication.service.GoogleAuthService;
+import backend.security.JwtService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final GoogleAuthService googleAuthService;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request) {
@@ -74,5 +77,20 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> sendResetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        authenticationService.sendResetPassword(email);
+        return ResponseEntity.ok(Map.of("message", "Email sent"));
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String username = jwtService.extractUsername(request.get("token"));
+        String password = request.get("password");
+        authenticationService.resetPassword(username, password);
+        return ResponseEntity.ok("Password reset successfully");
     }
 }

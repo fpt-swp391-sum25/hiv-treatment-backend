@@ -138,10 +138,12 @@ public class AuthenticationService {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "NO USER FOUND WITH USERNAME: " + request.username()));
 
-                if (user.getAccountStatus().equals("UNACTIVE")
-                                || !user.isVerified())
+                if (user.getAccountStatus().equals("Tạm khóa"))
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                                        "ACCOUNT IS UNACTIVE OR NOT VERIFIED YET");
+                                        "ACCOUNT IS UNACTIVE");
+                if (!user.isVerified())
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                                        "ACCOUNT IS NOT VERIFIED YET");
 
                 System.out.println(passwordEncoder.encode(request.password()));
                 if (!passwordEncoder.matches(request.password(), user.getPassword())) {
