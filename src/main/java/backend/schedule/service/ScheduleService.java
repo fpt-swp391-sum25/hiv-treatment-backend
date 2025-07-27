@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import backend.healthrecord.model.HealthRecord;
 import backend.healthrecord.repository.HealthRecordRepository;
 import backend.payment.repository.PaymentRepository;
-import backend.payment.service.PaymentService;
 import backend.schedule.dto.CreateScheduleRequest;
 import backend.schedule.dto.UpdateScheduleRequest;
 import backend.schedule.model.Schedule;
@@ -28,8 +27,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
-
-    private final PaymentService paymentService;
     @Autowired
     private final ScheduleRepository scheduleRepository;
 
