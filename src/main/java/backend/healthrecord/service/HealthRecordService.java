@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,7 +59,6 @@ public class HealthRecordService {
         HealthRecord record = healthRecordRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "NO HEALTH RECORD FOUND WITH ID: " + id));
-        System.out.println(">>>>>>>>>>>>>>>" + request.regimenId());
         Optional.ofNullable(request.hivStatus()).ifPresent(record::setHivStatus);
         Optional.ofNullable(request.bloodType()).ifPresent(record::setBloodType);
         Optional.ofNullable(request.weight()).ifPresent(record::setWeight);

@@ -52,16 +52,9 @@ public class HealthRecordController {
 
     @GetMapping("/doctor-id/{doctorId}")
     public ResponseEntity<List<HealthRecord>> getRecordsByDoctor(
-        @PathVariable long doctorId,
-        @RequestParam(required = false) String filterType,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate
-    ) {
-        System.out.println("===== Nhận request từ client =====");
-        System.out.println("doctorId: " + doctorId);
-        System.out.println("filterType: " + filterType);
-        System.out.println("selectedDate: " + selectedDate);
-        System.out.println("==================================");
-
+            @PathVariable long doctorId,
+            @RequestParam(required = false) String filterType,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate) {
         List<HealthRecord> result = healthRecordService.getByDoctorId(doctorId, filterType, selectedDate);
         return ResponseEntity.ok(result);
     }
