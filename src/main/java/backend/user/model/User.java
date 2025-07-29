@@ -2,6 +2,8 @@ package backend.user.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -59,6 +61,7 @@ public class User {
 
     private Role role;
 
+    @JsonProperty("displayId")
     public String getDisplayId() {
         return role.name().substring(0, 3) + "-" + id;
     }
