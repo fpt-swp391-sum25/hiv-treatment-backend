@@ -3,7 +3,7 @@ package backend.payment.dto;
 import java.time.LocalDateTime;
 
 public record CreatePaymentRequest (
-    Boolean status, 
+    String status, 
 
     String description, 
 

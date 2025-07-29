@@ -145,7 +145,6 @@ public class AuthenticationService {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                                         "ACCOUNT IS NOT VERIFIED YET");
 
-                System.out.println(passwordEncoder.encode(request.password()));
                 if (!passwordEncoder.matches(request.password(), user.getPassword())) {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "PASSWORD IS INCORRECT");
                 }
