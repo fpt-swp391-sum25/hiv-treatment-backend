@@ -1,9 +1,9 @@
-package backend.testresult.dto;
+package backend.testorder.dto;
 
 import java.time.LocalDateTime;
 
-public record CreateTestResultRequest(
-    String type,
+public record CreateTestOrderRequest(
+    String name,
 
     String note,
 

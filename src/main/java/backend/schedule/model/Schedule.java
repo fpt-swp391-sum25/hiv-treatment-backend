@@ -44,7 +44,7 @@ public class Schedule {
     @ManyToOne
     @JoinColumn(name = "doctorId", referencedColumnName = "id")
     private User doctor;
-
+    
     @ManyToOne
     @JoinColumn(name = "patientId", referencedColumnName = "id")
     private User patient;

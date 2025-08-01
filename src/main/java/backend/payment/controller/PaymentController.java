@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.payment.dto.CashPaymentRequest;
 import backend.payment.dto.PaymentDTO;
+import backend.payment.dto.SearchPaymentRequest;
 import backend.payment.model.Payment;
 import backend.payment.service.PaymentService;
 import backend.payment.service.VNPayService;
@@ -45,6 +48,12 @@ public class PaymentController {
         return ResponseEntity.ok(paymentUrl);
     }
 
+    @PostMapping("/cash")
+    public ResponseEntity<?> createCashPayment(@RequestBody CashPaymentRequest request) {
+        paymentService.createCashPayment(request);
+        return ResponseEntity.ok("Tạo thanh toán tiền mặt thành công");
+    }
+
     @GetMapping("/callback")
     public ResponseEntity<String> paymentCallback(@RequestParam Map<String, String> params) {
         try {
@@ -68,5 +77,21 @@ public class PaymentController {
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Payment>> getByStatus(@PathVariable String status) {
         return ResponseEntity.ok(paymentService.getByStatus(status));
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<Payment>> searchByStatusAndPatientName(
+            @RequestBody SearchPaymentRequest searchPaymentRequest) {
+        return ResponseEntity.ok(paymentService.getPaymentsByFilter(searchPaymentRequest));
+    }
+
+    @PutMapping("/{id}/toggle-status")
+    public ResponseEntity<?> togglePaymentStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(paymentService.togglePaymentStatus(id));
+    }
+
+    @GetMapping("/schedule/{scheduleId}")
+    public ResponseEntity<Payment> getByScheduleId(@PathVariable Long scheduleId) {
+        return ResponseEntity.ok(paymentService.getByScheduleId(scheduleId));
     }
 }

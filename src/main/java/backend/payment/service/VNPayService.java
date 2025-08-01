@@ -122,7 +122,7 @@ public class VNPayService {
         Payment payment = Payment.builder()
                 .schedule(schedule)
                 .paymentRef(vnp_TxnRef)
-                .description("Thanh toán lịch hẹn " + schedule.getId())
+                .description("ONLINE")
                 .status("Chờ thanh toán")
                 .amount(Float.parseFloat(amount))
                 .time(LocalDateTime.now())
@@ -153,9 +153,6 @@ public class VNPayService {
         vnp_Params.put("vnp_Amount", String.valueOf(amountLong));
         vnp_Params.put("vnp_CurrCode", "VND");
 
-        // if (bankCode != null && !bankCode.isEmpty()) {
-        // vnp_Params.put("vnp_BankCode", bankCode);
-        // }
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
@@ -205,15 +202,6 @@ public class VNPayService {
         Payment payment = paymentRepository.findByScheduleId(scheduleId).get();
         payment.setAmount(Long.parseLong(amount));
         payment.setPaymentRef(vnp_TxnRef);
-
-        // Payment.builder()
-        // .schedule(schedule)
-        // .paymentRef(vnp_TxnRef)
-        // .description("Thanh toán lịch hẹn " + schedule.getId())
-        // .status("Chờ thanh toán")
-        // .amount(Float.parseFloat(amount))
-        // .time(LocalDateTime.now())
-        // .build();
         paymentRepository.save(payment);
 
         return paymentUrl;
@@ -276,25 +264,14 @@ public class VNPayService {
 
         if (!calculatedHash.equals(vnpSecureHash)) {
             payment.setStatus("Thanh toán thất bại");
-            // payment.setDescription("Invalid checksum");
             paymentRepository.save(payment);
             throw new IllegalStateException("Invalid checksum");
         }
 
         if ("00".equals(vnpResponseCode)) {
             payment.setStatus("Thanh toán thành công");
-            // payment.setDescription("Thanh toán thành công, mã phản hồi: " +
-            // vnpResponseCode);
-            Schedule schedule = payment.getSchedule();
-            schedule.setStatus("Đã thanh toán");
-            scheduleRepository.save(schedule);
         } else {
             payment.setStatus("Thanh toán thất bại");
-            // payment.setDescription("Thanh toán thất bại, mã phản hồi: " +
-            // vnpResponseCode);
-            Schedule schedule = payment.getSchedule();
-            schedule.setStatus("Thanh toán thất bại");
-            scheduleRepository.save(schedule);
         }
         paymentRepository.save(payment);
     }

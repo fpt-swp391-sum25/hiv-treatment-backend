@@ -1,5 +1,7 @@
 package backend.healthrecord.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +59,6 @@ public class HealthRecordService {
         HealthRecord record = healthRecordRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "NO HEALTH RECORD FOUND WITH ID: " + id));
-        System.out.println(">>>>>>>>>>>>>>>" + request.regimenId());
         Optional.ofNullable(request.hivStatus()).ifPresent(record::setHivStatus);
         Optional.ofNullable(request.bloodType()).ifPresent(record::setBloodType);
         Optional.ofNullable(request.weight()).ifPresent(record::setWeight);
@@ -89,5 +90,43 @@ public class HealthRecordService {
         HealthRecord record = healthRecordRepository.findByScheduleId(scheduleId);
 
         return record;
+    }
+
+    // Read health record by doctor ID
+    public List<HealthRecord> getByDoctorId(long doctorId, String filterType, LocalDate selectedDate) {
+        List<HealthRecord> allRecords = healthRecordRepository.findAll();
+        List<HealthRecord> filteredRecords = new ArrayList<>();
+
+        for (HealthRecord h : allRecords) {
+            if (h.getSchedule().getDoctor().getId() != doctorId) continue;
+
+            LocalDate recordDate = h.getSchedule().getDate();
+            if (selectedDate != null && filterType != null) {
+                switch (filterType) {
+                    case "month":
+                        if (recordDate.getYear() != selectedDate.getYear() ||
+                            recordDate.getMonthValue() != selectedDate.getMonthValue()) {
+                            continue;
+                        }
+                        break;
+                    case "quarter":
+                        int recordQuarter = (recordDate.getMonthValue() - 1) / 3 + 1;
+                        int selectedQuarter = (selectedDate.getMonthValue() - 1) / 3 + 1;
+                        if (recordDate.getYear() != selectedDate.getYear() || recordQuarter != selectedQuarter) {
+                            continue;
+                        }
+                        break;
+                    case "year":
+                        if (recordDate.getYear() != selectedDate.getYear()) {
+                            continue;
+                        }
+                        break;
+                }
+            }
+
+            filteredRecords.add(h);
+        }
+
+        return filteredRecords;
     }
 }

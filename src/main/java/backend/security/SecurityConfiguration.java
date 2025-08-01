@@ -52,7 +52,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/regimen/**").permitAll()
                         .requestMatchers("/api/schedule/**").permitAll()
                         .requestMatchers("/api/system-configuration/**").permitAll()
-                        .requestMatchers("/api/test-result/**").permitAll()
+                        .requestMatchers("/api/test-order/**").permitAll()
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers(

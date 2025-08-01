@@ -40,4 +40,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Query("SELECT s FROM Schedule s WHERE s.date = :date AND s.status = :status AND s.patient IS NULL")
         List<Schedule> findActiveSchedulesByDate(LocalDate date, String status);
 
+        @Query("SELECT s FROM Schedule s WHERE LOWER(s.patient.fullName) LIKE LOWER(CONCAT('%', :name, '%'))")
+        List<Schedule> findByPatientFullName(@Param("name") String name);
+
+        boolean existsByPatientIdAndDateAndStatus(Long patientId, LocalDate date, String status);
 }
