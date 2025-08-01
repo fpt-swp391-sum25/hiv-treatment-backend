@@ -122,7 +122,7 @@ public class VNPayService {
         Payment payment = Payment.builder()
                 .schedule(schedule)
                 .paymentRef(vnp_TxnRef)
-                .description("ONLINE")
+                .description("VNPay")
                 .status("Chờ thanh toán")
                 .amount(Float.parseFloat(amount))
                 .time(LocalDateTime.now())
