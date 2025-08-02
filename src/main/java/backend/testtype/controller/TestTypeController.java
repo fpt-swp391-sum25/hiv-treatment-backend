@@ -31,7 +31,8 @@ public class TestTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> update(@PathVariable long id, @RequestBody UpdateTestTypeRequest request) {
+    public ResponseEntity<Map<String, String>> update(@PathVariable long id,
+            @RequestBody UpdateTestTypeRequest request) {
         return ResponseEntity.ok(Map.of("message", testTypeService.update(id, request)));
     }
 
@@ -43,5 +44,10 @@ public class TestTypeController {
     @GetMapping()
     public ResponseEntity<List<TestType>> list() {
         return ResponseEntity.ok(testTypeService.list());
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Map<String, String>> isExists(@PathVariable long id) {
+        return ResponseEntity.ok(Map.of("message", testTypeService.isExists(id)));
     }
 }
