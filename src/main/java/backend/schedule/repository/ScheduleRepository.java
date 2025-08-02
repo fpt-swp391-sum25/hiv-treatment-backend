@@ -63,4 +63,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Param("slot") LocalTime slot
         );
         
+        boolean existsByPatientIdAndDateAndStatus(Long patientId, LocalDate date, String status);
 }

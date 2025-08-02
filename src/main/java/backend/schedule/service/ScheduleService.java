@@ -52,7 +52,7 @@ public class ScheduleService {
                         result -> (Long) result[1]));
 
         if (slotCountMap.getOrDefault(request.slot(), 0L) >= 5) {
-            throw new IllegalStateException("Slot " + request.slot() + " đã đủ 5 lịch hẹn.");
+            throw new IllegalStateException("Slot " + request.slot() + " đã đủ lịch hẹn.");
         }
 
         Schedule checkupSchedule = Schedule.builder()
@@ -132,7 +132,7 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
 
-        if (!List.of("Đang chờ", "Đang chờ thanh toán", "Đã thanh toán").contains(schedule.getStatus())) {
+        if (!List.of("Đang hoạt động").contains(schedule.getStatus())) {
             throw new IllegalStateException("Cannot cancel schedule with status: " + schedule.getStatus());
         }
 
@@ -161,10 +161,13 @@ public class ScheduleService {
     public String register(long id, long patientId, String type) {
         Schedule CheckupSchedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO SLOT FOUND WITH ID: " + id));
-
+        if (scheduleRepository.existsByPatientIdAndDateAndStatus(patientId, CheckupSchedule.getDate(),
+                "Đang hoạt động")) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Patient already has an appointment on this date");
+        }
         Optional.ofNullable(userRepository.findById(patientId).get()).ifPresent(CheckupSchedule::setPatient);
         Optional.ofNullable(type).ifPresent(CheckupSchedule::setType);
-        CheckupSchedule.setStatus("Đang chờ thanh toán");
+        CheckupSchedule.setStatus("Đang hoạt động");
         scheduleRepository.save(CheckupSchedule);
 
         return "SLOT REGISTERED SUCCESSFULLY WITH ID: " + id;
@@ -204,6 +207,7 @@ public class ScheduleService {
         return scheduleRepository.findBySlot(slot);
     }
     
+
     // Search by patient full name
     public List<Schedule> searchByPatientName(String name) {
         return scheduleRepository.findByPatientFullName(name);

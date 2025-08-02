@@ -33,6 +33,12 @@ public class HealthRecordController {
         return ResponseEntity.ok(Map.of("message", healthRecordService.create(request)));
     }
 
+    @PostMapping("/schedule-id")
+    public ResponseEntity<Map<String, String>> createByPaymentId(@RequestBody CreateHealthRecordRequest request) {
+        healthRecordService.createByPaymentId(request);
+        return ResponseEntity.ok(Map.of("message", "Create health record successfully"));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, String>> update(@PathVariable long id,
             @RequestBody UpdateHealthRecordRequest request) {
