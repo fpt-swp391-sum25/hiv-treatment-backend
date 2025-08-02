@@ -39,6 +39,7 @@ public class Schedule {
 
     private LocalDate date;
 
+    @Column(name = "slot", columnDefinition = "TIME")
     private LocalTime slot;
 
     @ManyToOne

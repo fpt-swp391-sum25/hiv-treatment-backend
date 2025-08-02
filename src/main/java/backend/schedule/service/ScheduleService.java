@@ -3,7 +3,9 @@ package backend.schedule.service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -209,4 +211,59 @@ public class ScheduleService {
     public List<Schedule> searchByPatientName(String name) {
         return scheduleRepository.findByPatientFullName(name);
     }
+
+    // Update multiple slot in a date at a time
+    public void bulkUpdateSchedules(Long doctorId, LocalDate date, String roomCode, LocalTime slot) {
+        List<Schedule> schedules = scheduleRepository.findByDoctorIdAndDate(doctorId, date);
+
+        for (Schedule schedule : schedules) {
+            schedule.setRoomCode(roomCode);
+            schedule.setSlot(slot);  
+        }
+
+        scheduleRepository.saveAll(schedules);
+    }
+
+    // Delete multiple slot in a date at a time
+    public void bulkDeleteSchedules(Long doctorId, LocalDate date) {
+        scheduleRepository.deleteByDoctorIdAndDate(doctorId, date);
+    }
+
+    // Update schedule status
+    public void updateScheduleStatus(Long scheduleId, String newStatus) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        schedule.setStatus(newStatus);
+        scheduleRepository.save(schedule);
+    }
+
+    public List<Map<String, Object>> getPatientByScheduleId(Long scheduleId) {
+        Schedule baseSchedule = scheduleRepository.findById(scheduleId).orElse(null);
+        if (baseSchedule == null) {
+            return List.of();
+        }   
+
+        List<Schedule> schedules = scheduleRepository.findSchedulesByDoctorDateAndSlot(
+            baseSchedule.getDoctor().getId(),
+            baseSchedule.getDate(),
+            baseSchedule.getSlot()
+        );
+
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        int slotNumber = 1;
+        for (Schedule s : schedules) {
+            if (s.getPatient() != null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("slotNumber", slotNumber++);
+                map.put("patientId", s.getPatient().getId());
+                map.put("fullName", s.getPatient().getFullName());
+                resultList.add(map);
+            }
+        }
+
+        return resultList;
+    }
+
+    
 }
