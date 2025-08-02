@@ -45,8 +45,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Query("SELECT s FROM Schedule s WHERE LOWER(s.patient.fullName) LIKE LOWER(CONCAT('%', :name, '%'))")
         List<Schedule> findByPatientFullName(@Param("name") String name);
 
-<<<<<<< HEAD
-=======
         List<Schedule> findByDoctorIdAndDate(Long doctorId, LocalDate date);
 
         @Transactional
@@ -54,17 +52,12 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Query("DELETE FROM Schedule s WHERE s.doctor.id = :doctorId AND s.date = :date")
         void deleteByDoctorIdAndDate(@Param("doctorId") Long doctorId, @Param("date") LocalDate date);
 
-        @Query(
-        value = "SELECT * FROM schedule " +
-                "WHERE doctor_id = :doctorId AND date = :date AND CAST(slot AS time) = CAST(:slot AS time)",
-        nativeQuery = true
-        )
+        @Query(value = "SELECT * FROM schedule " +
+                        "WHERE doctor_id = :doctorId AND date = :date AND CAST(slot AS time) = CAST(:slot AS time)", nativeQuery = true)
         List<Schedule> findSchedulesByDoctorDateAndSlot(
-        @Param("doctorId") Long doctorId,
-        @Param("date") LocalDate date,
-        @Param("slot") LocalTime slot
-        );
-        
->>>>>>> c6f13c691851d8ea8df34310bf5dd73c4faa6924
+                        @Param("doctorId") Long doctorId,
+                        @Param("date") LocalDate date,
+                        @Param("slot") LocalTime slot);
+
         boolean existsByPatientIdAndDateAndStatus(Long patientId, LocalDate date, String status);
 }
