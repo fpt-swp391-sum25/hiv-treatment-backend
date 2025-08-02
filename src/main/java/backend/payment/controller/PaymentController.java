@@ -53,6 +53,7 @@ public class PaymentController {
         paymentService.createCashPayment(request);
         return ResponseEntity.ok("Tạo thanh toán tiền mặt thành công");
     }
+
     @GetMapping("/callback")
     public ResponseEntity<String> paymentCallback(@RequestParam Map<String, String> params) {
         try {
@@ -79,7 +80,8 @@ public class PaymentController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<Payment>> searchByStatusAndPatientName(@RequestBody SearchPaymentRequest searchPaymentRequest) {
+    public ResponseEntity<List<Payment>> searchByStatusAndPatientName(
+            @RequestBody SearchPaymentRequest searchPaymentRequest) {
         return ResponseEntity.ok(paymentService.getPaymentsByFilter(searchPaymentRequest));
     }
 

@@ -17,6 +17,7 @@ import backend.healthrecord.repository.HealthRecordRepository;
 import backend.payment.model.Payment;
 import backend.payment.repository.PaymentRepository;
 import backend.regimen.repository.RegimenRepository;
+import backend.schedule.model.Schedule;
 import backend.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +37,18 @@ public class HealthRecordService {
                 .hivStatus("Chưa xác định")
                 .treatmentStatus("Đang chờ khám")
                 .schedule(scheduleRepository.findById(payment.getSchedule().getId()).get())
+                .build();
+        healthRecordRepository.save(healthRecord);
+
+        return "CHECK-UP RECORD CREATED WITH ID: " + healthRecord.getId();
+    }
+
+    public String createByPaymentId(CreateHealthRecordRequest request) {
+        Payment payment = paymentRepository.findById(request.paymentId()).get();
+        var healthRecord = HealthRecord.builder()
+                .hivStatus("Chưa xác định")
+                .treatmentStatus("Đang chờ khám")
+                .schedule(scheduleRepository.findById((long) payment.getSchedule().getId()).get())
                 .build();
         healthRecordRepository.save(healthRecord);
 
@@ -98,14 +111,15 @@ public class HealthRecordService {
         List<HealthRecord> filteredRecords = new ArrayList<>();
 
         for (HealthRecord h : allRecords) {
-            if (h.getSchedule().getDoctor().getId() != doctorId) continue;
+            if (h.getSchedule().getDoctor().getId() != doctorId)
+                continue;
 
             LocalDate recordDate = h.getSchedule().getDate();
             if (selectedDate != null && filterType != null) {
                 switch (filterType) {
                     case "month":
                         if (recordDate.getYear() != selectedDate.getYear() ||
-                            recordDate.getMonthValue() != selectedDate.getMonthValue()) {
+                                recordDate.getMonthValue() != selectedDate.getMonthValue()) {
                             continue;
                         }
                         break;

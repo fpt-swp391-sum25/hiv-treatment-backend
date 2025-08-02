@@ -20,19 +20,20 @@ public class GlobalExceptionHandler {
     // Thông báo nếu email, username, số điện thoại đã tồn tại
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        if (ex.getMessage().toLowerCase().contains("email")) {
+        String message = ex.getRootCause() != null ? ex.getRootCause().getMessage().toLowerCase()
+                : ex.getMessage().toLowerCase();
+
+        if (message.contains("unique_email") || message.contains("email")) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         }
-
-        if (ex.getMessage().toLowerCase().contains("username")) {
+        if (message.contains("unique_username") || message.contains("username")) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
         }
-
-        if (ex.getMessage().toLowerCase().contains("phone")) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+        if (message.contains("unique_phone") || message.contains("phone")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Phone already exists");
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Data integrity violation");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Data integrity violation: " + message);
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
