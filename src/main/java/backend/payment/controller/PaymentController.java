@@ -80,7 +80,8 @@ public class PaymentController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<Payment>> searchByStatusAndPatientName(@RequestBody SearchPaymentRequest searchPaymentRequest) {
+    public ResponseEntity<List<Payment>> searchByStatusAndPatientName(
+            @RequestBody SearchPaymentRequest searchPaymentRequest) {
         return ResponseEntity.ok(paymentService.getPaymentsByFilter(searchPaymentRequest));
     }
 

@@ -10,4 +10,6 @@ import backend.testorder.model.TestOrder;
 @Repository
 public interface TestOrderRepository extends JpaRepository<TestOrder, Long> {
     List<TestOrder> findByHealthRecordId(long healthRecordId);
+
+    List<TestOrder> findByTestTypeId(long testTypeId);
 }

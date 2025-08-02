@@ -206,7 +206,6 @@ public class ScheduleService {
     public List<Schedule> getBySlot(LocalTime slot) {
         return scheduleRepository.findBySlot(slot);
     }
-    
 
     // Search by patient full name
     public List<Schedule> searchByPatientName(String name) {
