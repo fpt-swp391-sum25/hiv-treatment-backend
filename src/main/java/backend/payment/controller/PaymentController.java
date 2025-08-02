@@ -84,12 +84,23 @@ public class PaymentController {
     }
 
     @PutMapping("/{id}/toggle-status")
-    public ResponseEntity<?> togglePaymentStatus(@PathVariable Long id) {
+    public ResponseEntity<Payment> togglePaymentStatus(@PathVariable Long id) {
         return ResponseEntity.ok(paymentService.togglePaymentStatus(id));
     }
 
     @GetMapping("/schedule/{scheduleId}")
     public ResponseEntity<Payment> getByScheduleId(@PathVariable Long scheduleId) {
         return ResponseEntity.ok(paymentService.getByScheduleId(scheduleId));
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<List<Payment>> getPaymentStatistics(
+        @RequestParam(required = false) String startDate,
+        @RequestParam(required = false) String endDate) {
+            
+        System.out.println("Received start = " + startDate);
+        System.out.println("Received end = " + endDate);
+
+        return ResponseEntity.ok(paymentService.getPaymentStatistics(startDate, endDate));
     }
 }
