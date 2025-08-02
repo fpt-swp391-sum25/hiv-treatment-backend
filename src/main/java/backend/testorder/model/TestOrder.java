@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,25 +33,25 @@ public class TestOrder {
 
     @Column(columnDefinition = "NVARCHAR(100)")
     private String name;
-    
+
     @Column(columnDefinition = "NVARCHAR(100)")
     private String result;
-    
+
     @Column(columnDefinition = "NVARCHAR(100)")
     private String paymentStatus;
 
     @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String note;    
+    private String note;
 
     private LocalDateTime expectedResultTime;
-    
+
     private LocalDateTime actualResultTime;
-    
+
     @ManyToOne
     @JoinColumn(name = "healthRecordId", referencedColumnName = "id")
     private HealthRecord healthRecord;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "testTypeId", referencedColumnName = "id")
     private TestType type;
 }

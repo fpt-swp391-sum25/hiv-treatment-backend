@@ -13,6 +13,9 @@ import backend.testorder.dto.CreateTestOrderRequest;
 import backend.testorder.dto.UpdateTestOrderRequest;
 import backend.testorder.model.TestOrder;
 import backend.testorder.repository.TestOrderRepository;
+import backend.testtype.controller.TestTypeController;
+import backend.testtype.model.TestType;
+import backend.testtype.repository.TestTypeRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,14 +27,17 @@ public class TestOrderService {
     @Autowired
     private final HealthRecordRepository healthRecordRepository;
 
+    @Autowired
+    private final TestTypeRepository testTypeRepository;
+
     // Create test order
     public String create(CreateTestOrderRequest request) {
         var testOrder = TestOrder.builder()
-            .name(request.name())
-            .note(request.note())
-            .expectedResultTime(request.expectedResultTime())
-            .healthRecord(healthRecordRepository.findById(request.healthRecordId()).get())
-            .build();
+                .name(request.name())
+                .note(request.note())
+                .expectedResultTime(request.expectedResultTime())
+                .healthRecord(healthRecordRepository.findById(request.healthRecordId()).get())
+                .build();
         testOrderRepository.save(testOrder);
 
         return "TEST ORDER CREATED SUCCESSFULLY WITH ID: " + testOrder.getId();
@@ -45,24 +51,27 @@ public class TestOrderService {
     // Update test order
     public String update(long id, UpdateTestOrderRequest request) {
         TestOrder testOrder = testOrderRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO TEST ORDER FOUND WITH ID: " + id));
-        
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO TEST ORDER FOUND WITH ID: " + id));
+        TestType testType = testTypeRepository.findById(request.testTypeId()).get();
         Optional.ofNullable(request.name()).ifPresent(testOrder::setName);
         Optional.ofNullable(request.result()).ifPresent(testOrder::setResult);
         Optional.ofNullable(request.unit()).ifPresent(testOrder::setUnit);
         Optional.ofNullable(request.note()).ifPresent(testOrder::setNote);
+        Optional.ofNullable(testTypeRepository.findById(request.testTypeId()).get()).ifPresent(testOrder::setType);
         Optional.ofNullable(request.paymentStatus()).ifPresent(testOrder::setPaymentStatus);
         Optional.ofNullable(request.expectedResultTime()).ifPresent(testOrder::setExpectedResultTime);
         Optional.ofNullable(request.actualResultTime()).ifPresent(testOrder::setActualResultTime);
         testOrderRepository.save(testOrder);
-        
+
         return "TEST ORDER UPDATED SUCCESSFULLY WITH ID: " + id;
-    }   
-    
+    }
+
     // Delete test order
     public String delete(long id) {
         testOrderRepository.delete(testOrderRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO TEST ORDER FOUND WITH ID: " + id)));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO TEST ORDER FOUND WITH ID: " + id)));
 
         return "TEST ORDER DELETED SUCCESSFULLY WITH ID: " + id;
     }
@@ -77,7 +86,8 @@ public class TestOrderService {
         List<TestOrder> testOrders = testOrderRepository.findByHealthRecordId(healthRecordId);
 
         if (testOrders.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "NO TEST ORDER FOUND WITH HEALTH RECORD ID: " + healthRecordId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "NO TEST ORDER FOUND WITH HEALTH RECORD ID: " + healthRecordId);
         }
 
         for (TestOrder order : testOrders) {
@@ -93,7 +103,8 @@ public class TestOrderService {
         List<TestOrder> testOrders = testOrderRepository.findByHealthRecordId(healthRecordId);
 
         if (testOrders.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "NO TEST ORDER FOUND WITH HEALTH RECORD ID: " + healthRecordId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "NO TEST ORDER FOUND WITH HEALTH RECORD ID: " + healthRecordId);
         }
 
         for (TestOrder order : testOrders) {
