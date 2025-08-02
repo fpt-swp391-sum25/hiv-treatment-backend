@@ -1,5 +1,6 @@
 package backend.payment.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
         @Param("name") String name,
         @Param("description") String description
     );
+
+    @Query("SELECT p FROM Payment p WHERE p.time BETWEEN :startDate AND :endDate")
+    List<Payment> findByDateTimeRange(@Param("startDate") LocalDateTime start, @Param("endDate") LocalDateTime end);
 }   
