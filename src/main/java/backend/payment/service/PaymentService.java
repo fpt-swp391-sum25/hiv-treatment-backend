@@ -2,6 +2,7 @@ package backend.payment.service;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,5 +126,22 @@ public class PaymentService {
         payment.setTime(LocalDateTime.now());
 
         paymentRepository.save(payment);
+    }
+    
+    public List<Payment> getPaymentStatistics(String startDateStr, String endDateStr) {
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+
+        try {
+            if (startDateStr != null && !startDateStr.isBlank()) {
+                startDateTime = ZonedDateTime.parse(startDateStr).toLocalDateTime(); 
+            }
+            if (endDateStr != null && !endDateStr.isBlank()) {
+                endDateTime = ZonedDateTime.parse(endDateStr).toLocalDateTime();
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format", e);
+        }
+        return paymentRepository.findByDateTimeRange(startDateTime, endDateTime);
     }
 }
