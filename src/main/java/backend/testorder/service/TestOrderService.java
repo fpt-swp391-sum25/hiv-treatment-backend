@@ -8,12 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import backend.healthrecord.model.HealthRecord;
 import backend.healthrecord.repository.HealthRecordRepository;
 import backend.testorder.dto.CreateTestOrderRequest;
 import backend.testorder.dto.UpdateTestOrderRequest;
 import backend.testorder.model.TestOrder;
 import backend.testorder.repository.TestOrderRepository;
-import backend.testtype.controller.TestTypeController;
 import backend.testtype.model.TestType;
 import backend.testtype.repository.TestTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -78,13 +78,15 @@ public class TestOrderService {
 
     // List test orders by health record ID
     public List<TestOrder> list(long recordId) {
-        return testOrderRepository.findByHealthRecordId(recordId);
+        HealthRecord healthRecord = healthRecordRepository.findByScheduleId(recordId);
+        return testOrderRepository.findByHealthRecordId(healthRecord.getId());
     }
 
     // Confirm payment of test order by health record ID
-    public String confirmPayment(long healthRecordId) {
+    public String confirmPayment(long healthRecordId, String totalPrice) {
         List<TestOrder> testOrders = testOrderRepository.findByHealthRecordId(healthRecordId);
-
+        HealthRecord healthRecord = healthRecordRepository.findById(healthRecordId).get();
+        healthRecord.setTestOrderPrice(Float.parseFloat(totalPrice));
         if (testOrders.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "NO TEST ORDER FOUND WITH HEALTH RECORD ID: " + healthRecordId);
@@ -93,7 +95,7 @@ public class TestOrderService {
         for (TestOrder order : testOrders) {
             order.setPaymentStatus("Đã thanh toán");
         }
-
+        healthRecordRepository.save(healthRecord);
         testOrderRepository.saveAll(testOrders);
         return "CONFIRM TEST PAYMENT SUCCESSFULLY WITH SCHEDULE ID: " + healthRecordId;
     }
