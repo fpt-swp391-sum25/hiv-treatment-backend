@@ -2,6 +2,7 @@ package backend.healthrecord.model;
 
 import backend.regimen.model.Regimen;
 import backend.schedule.model.Schedule;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,11 +35,14 @@ public class HealthRecord {
 
     @Column(columnDefinition = "NVARCHAR(100)")
     private String treatmentStatus;
-    
+
     private float weight;
 
     private float height;
-    
+
+    @Nullable
+    private float testOrderPrice;
+
     @ManyToOne
     @JoinColumn(name = "scheduleId", referencedColumnName = "id")
     private Schedule schedule;
