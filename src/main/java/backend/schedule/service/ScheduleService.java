@@ -75,6 +75,10 @@ public class ScheduleService {
                 .collect(Collectors.toList());
     }
 
+    public List<Schedule> getSchedulesByDoctorDateAndSlot(Long doctorId, LocalDate date, LocalTime slot) {
+        return scheduleRepository.findByDoctorDateAndOptionalSlot(doctorId, date, slot);
+    }
+
     // List schedule slots
     public List<Schedule> list() {
         return scheduleRepository.findAll();
