@@ -31,7 +31,8 @@ public class TestOrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> update(@PathVariable long id, @RequestBody UpdateTestOrderRequest request) {
+    public ResponseEntity<Map<String, String>> update(@PathVariable long id,
+            @RequestBody UpdateTestOrderRequest request) {
         return ResponseEntity.ok(Map.of("message", testOrderService.update(id, request)));
     }
 
@@ -46,8 +47,10 @@ public class TestOrderController {
     }
 
     @PutMapping("/success/{healthRecordId}")
-    public ResponseEntity<Map<String, String>> confirmPayment(@PathVariable long healthRecordId) {
-        return ResponseEntity.ok(Map.of("message", testOrderService.confirmPayment(healthRecordId)));
+    public ResponseEntity<Map<String, String>> confirmPayment(@PathVariable long healthRecordId,
+            @RequestBody Map<String, String> request) {
+        return ResponseEntity
+                .ok(Map.of("message", testOrderService.confirmPayment(healthRecordId, request.get("totalPrice"))));
     }
 
     @PutMapping("/undo/{healthRecordId}")
