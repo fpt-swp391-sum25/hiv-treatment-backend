@@ -52,16 +52,12 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         @Query("DELETE FROM Schedule s WHERE s.doctor.id = :doctorId AND s.date = :date")
         void deleteByDoctorIdAndDate(@Param("doctorId") Long doctorId, @Param("date") LocalDate date);
 
-        @Query(
-        value = "SELECT * FROM schedule " +
-                "WHERE doctor_id = :doctorId AND date = :date AND CAST(slot AS time) = CAST(:slot AS time)",
-        nativeQuery = true
-        )
+        @Query(value = "SELECT * FROM schedule " +
+                        "WHERE doctor_id = :doctorId AND date = :date AND CAST(slot AS time) = CAST(:slot AS time)", nativeQuery = true)
         List<Schedule> findSchedulesByDoctorDateAndSlot(
-        @Param("doctorId") Long doctorId,
-        @Param("date") LocalDate date,
-        @Param("slot") LocalTime slot
-        );
-        
+                        @Param("doctorId") Long doctorId,
+                        @Param("date") LocalDate date,
+                        @Param("slot") LocalTime slot);
+
         boolean existsByPatientIdAndDateAndStatus(Long patientId, LocalDate date, String status);
 }
