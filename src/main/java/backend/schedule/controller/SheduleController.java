@@ -18,6 +18,7 @@
     import org.springframework.web.bind.annotation.RequestParam;
     import org.springframework.web.bind.annotation.RestController;
 
+import backend.schedule.dto.BulkUpdateScheduleRequest;
 import backend.schedule.dto.CreateScheduleRequest;
 import backend.schedule.dto.UpdateScheduleRequest;
 import backend.schedule.model.Schedule;
