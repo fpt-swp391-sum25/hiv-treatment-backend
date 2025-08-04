@@ -39,6 +39,13 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
                         @Param("date") LocalDate date,
                         @Param("status") String status);
 
+        @Query("SELECT s FROM Schedule s WHERE s.doctor.id = :doctorId AND s.date = :date " +
+               "AND (:slot IS NULL OR CAST(s.slot AS time) = CAST(:slot AS time))")
+        List<Schedule> findByDoctorDateAndOptionalSlot(
+                        @Param("doctorId") Long doctorId,
+                        @Param("date") LocalDate date,
+                        @Param("slot") LocalTime slot);
+
         @Query("SELECT s FROM Schedule s WHERE s.date = :date AND s.status = :status AND s.patient IS NULL")
         List<Schedule> findActiveSchedulesByDate(LocalDate date, String status);
 

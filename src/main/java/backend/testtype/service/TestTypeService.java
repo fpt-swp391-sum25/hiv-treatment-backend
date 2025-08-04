@@ -41,9 +41,9 @@ public class TestTypeService {
     }
 
     public String isExists(long id) {
-        List<TestOrder> testOrder = testOrderRepository.findByTestTypeId(id);
-        if (!testOrder.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "TEST TYPE ALREADY IN USED");
+        TestOrder testOrder = testOrderRepository.findById(id).get();
+        if (testOrder != null) {
+            return "TEST TYPE ALREADY IN USED";
         }
         return "TEST TYPE CAN BE DELETED";
     }

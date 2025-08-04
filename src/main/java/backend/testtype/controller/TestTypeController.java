@@ -48,6 +48,6 @@ public class TestTypeController {
 
     @PostMapping("/{id}")
     public ResponseEntity<Map<String, String>> isExists(@PathVariable long id) {
-        return ResponseEntity.ok(Map.of("message", testTypeService.isExists(id)));
+        return ResponseEntity.ok(Map.of("message", String.valueOf(testTypeService.isExists(id))));
     }
 }
