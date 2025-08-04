@@ -1,8 +1,5 @@
     package backend.schedule.controller;
 
-    import java.io.UnsupportedEncodingException;
-    import java.net.URLDecoder;
-    import java.nio.charset.StandardCharsets;
     import java.time.LocalDate;
     import java.time.LocalTime;
     import java.time.format.DateTimeFormatter;
@@ -38,19 +35,17 @@ import lombok.RequiredArgsConstructor;
             return ResponseEntity.ok(Map.of("message", checkupScheduleService.create(request)));
         }
 
-        @GetMapping()
-        public ResponseEntity<List<Schedule>> getSchedules(
-                @RequestParam(required = false) Long doctorId,
-                @RequestParam String date,
-                @RequestParam(required = false) String status) throws UnsupportedEncodingException {
-            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
-            String decodedStatus = status != null ? URLDecoder.decode(status, StandardCharsets.UTF_8.name()) : null;
-            List<Schedule> schedules = checkupScheduleService.getSchedulesByDoctorDateAndStatus(
-                    doctorId, parsedDate, decodedStatus);
-            return ResponseEntity.ok(schedules);
-        }
-
-        @GetMapping("/list")
+    @GetMapping()
+    public ResponseEntity<List<Schedule>> getSchedules(
+            @RequestParam Long doctorId,
+            @RequestParam String date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime slot) {
+        LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+        List<Schedule> schedules = checkupScheduleService.getSchedulesByDoctorDateAndSlot(
+                doctorId, parsedDate, slot);
+        System.out.println("<<<<<<<<<<<<"+ doctorId +","+ parsedDate +","+slot);
+        return ResponseEntity.ok(schedules);
+    }        @GetMapping("/list")
         public ResponseEntity<List<Schedule>> list() {
             return ResponseEntity.ok(checkupScheduleService.list());
         }
@@ -72,6 +67,14 @@ import lombok.RequiredArgsConstructor;
         public ResponseEntity<Map<String, String>> update(@PathVariable long id,
                 @RequestBody UpdateScheduleRequest request) {
             return ResponseEntity.ok(Map.of("message", checkupScheduleService.update(id, request)));
+        }
+
+        @PutMapping("/{id}/status")
+        public ResponseEntity<Map<String, String>> updateStatus(@PathVariable long id,
+                @RequestBody Map<String, String> request) {
+            String status = request.get("status");
+            checkupScheduleService.updateScheduleStatus(id, status);
+            return ResponseEntity.ok(Map.of("message", "Schedule status updated successfully"));
         }
 
         @PutMapping("/register/schedule-id/{id}")
@@ -126,6 +129,20 @@ import lombok.RequiredArgsConstructor;
         @GetMapping("/slot/{slot}")
         public ResponseEntity<List<Schedule>> getBySlot(@PathVariable LocalTime slot) {
             return ResponseEntity.ok(checkupScheduleService.getBySlot(slot));
+        }
+
+        @PutMapping("/bulk-update")
+        public ResponseEntity<Map<String, String>> bulkUpdateSchedules(@RequestBody BulkUpdateScheduleRequest request) {
+            checkupScheduleService.bulkUpdateSchedules(request.getDoctorId(), request.getDate(), request.getRoomCode(), request.getSlot());
+            return ResponseEntity.ok(Map.of("message", "Bulk update schedules successful"));
+        }
+
+        @DeleteMapping("/bulk-delete")
+        public ResponseEntity<Map<String, String>> bulkDeleteSchedules(
+                @RequestParam Long doctorId,
+                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            checkupScheduleService.bulkDeleteSchedules(doctorId, date);
+            return ResponseEntity.ok(Map.of("message", "Bulk delete schedules successful"));
         }
 
         @GetMapping("/search")
