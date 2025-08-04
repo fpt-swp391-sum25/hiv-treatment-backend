@@ -41,8 +41,8 @@ public class TestTypeService {
     }
 
     public String isExists(long id) {
-        TestOrder testOrder = testOrderRepository.findById(id).get();
-        if (testOrder != null) {
+        List<TestOrder> testOrder = testOrderRepository.findByTestTypeId(id);
+        if (!testOrder.isEmpty()) {
             return "TEST TYPE ALREADY IN USED";
         }
         return "TEST TYPE CAN BE DELETED";
