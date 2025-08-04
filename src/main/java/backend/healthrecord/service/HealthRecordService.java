@@ -17,7 +17,6 @@ import backend.healthrecord.repository.HealthRecordRepository;
 import backend.payment.model.Payment;
 import backend.payment.repository.PaymentRepository;
 import backend.regimen.repository.RegimenRepository;
-import backend.schedule.model.Schedule;
 import backend.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 
