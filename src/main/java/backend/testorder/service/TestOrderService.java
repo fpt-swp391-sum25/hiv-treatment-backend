@@ -35,6 +35,7 @@ public class TestOrderService {
         var testOrder = TestOrder.builder()
                 .name(request.name())
                 .note(request.note())
+                .paymentStatus("Chưa thanh toán")
                 .expectedResultTime(request.expectedResultTime())
                 .healthRecord(healthRecordRepository.findById(request.healthRecordId()).get())
                 .build();
@@ -78,8 +79,7 @@ public class TestOrderService {
 
     // List test orders by health record ID
     public List<TestOrder> list(long recordId) {
-        HealthRecord healthRecord = healthRecordRepository.findByScheduleId(recordId);
-        return testOrderRepository.findByHealthRecordId(healthRecord.getId());
+        return testOrderRepository.findByHealthRecordId(recordId);
     }
 
     // Confirm payment of test order by health record ID
@@ -102,6 +102,8 @@ public class TestOrderService {
 
     // Undo payment of test order by health record ID
     public String undoPayment(long healthRecordId) {
+        HealthRecord healthRecord = healthRecordRepository.findById(healthRecordId).get();
+        healthRecord.setTestOrderPrice(0);
         List<TestOrder> testOrders = testOrderRepository.findByHealthRecordId(healthRecordId);
 
         if (testOrders.isEmpty()) {
@@ -112,7 +114,7 @@ public class TestOrderService {
         for (TestOrder order : testOrders) {
             order.setPaymentStatus("Chưa thanh toán");
         }
-
+        healthRecordRepository.save(healthRecord);
         testOrderRepository.saveAll(testOrders);
         return "UNDO TEST PAYMENT SUCCESSFULLY WITH SCHEDULE ID: " + healthRecordId;
     }
