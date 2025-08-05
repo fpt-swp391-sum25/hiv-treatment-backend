@@ -28,7 +28,6 @@ public class DocumentImageController {
 
     @PostMapping
     public ResponseEntity<Map<String, String>> create(@RequestBody CreateDocumentImageRequest request) {
-        System.out.println(">>>>>" + request.image());
         return ResponseEntity.ok(Map.of("message", documentImageService.create(request)));
     }
 
