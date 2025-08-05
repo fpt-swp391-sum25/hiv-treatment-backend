@@ -59,7 +59,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(Map.of("message", authenticationService.verify(token)));
     }
 
-    @GetMapping("/resend-email")
+    @PostMapping("/resend-email")
     public ResponseEntity<Map<String, String>> resendVerify(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         authenticationService.resendVerify(email);

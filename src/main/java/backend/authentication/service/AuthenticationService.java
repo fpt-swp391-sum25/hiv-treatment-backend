@@ -114,12 +114,19 @@ public class AuthenticationService {
                 }
 
                 String token = UUID.randomUUID().toString();
-                MailVerification verificationToken = MailVerification.builder()
-                                .token(token)
-                                .expiryDate(LocalDateTime.now().plusHours(24))
-                                .user(user)
-                                .build();
-                mailVerificationRepository.save(verificationToken);
+                MailVerification mail = mailVerificationRepository.findByUserId(user.getId());
+                if (mail == null) {
+                        MailVerification verificationToken = MailVerification.builder()
+                                        .token(token)
+                                        .expiryDate(LocalDateTime.now().plusHours(24))
+                                        .user(user)
+                                        .build();
+                        mailVerificationRepository.save(verificationToken);
+                } else {
+                        mail.setExpiryDate(LocalDateTime.now().plusHours(24));
+                        mail.setToken(token);
+                        mailVerificationRepository.save(mail);
+                }
 
                 String subject = "Xác nhận email của bạn";
                 String verificationUrl = "http://localhost:3000/verify?token=" + token;
